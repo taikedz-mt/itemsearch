@@ -65,3 +65,22 @@ minetest.register_chatcommand("finditem",{
 		end
 	end,
 })
+
+local function identify_inventory(user)
+    local inventory = user:get_inventory()
+    local col = 0
+    local row = 1
+    for idx,x in pairs(inventory:get_list("main") ) do
+        minetest.chat_send_player(user:get_player_name(), row..":"..(col+1).." -> "..x:get_name() )
+        col = (col+1) % 8
+        if col == 0 then row = row+1 end
+    end
+    return 0
+end
+
+minetest.register_chatcommand("listinventory",{
+    privs = "itemsearch",
+    func = function(player,paramlist)
+        identify_inventory(minetest.get_player_by_name(player) )
+    end,
+})
