@@ -6,7 +6,7 @@
 -- distribute the software to.
 -- Released under the terms of the GPLv3
 
-itemlist = {}
+local itemlist = {}
 
 local loadup = function(rtable)
 	if not rtable then return end
@@ -44,9 +44,15 @@ end
 
 minetest.register_chatcommand("finditem",{
 	privs = "itemsearch",
+    description = "Search for an item name using substring to match on. If multiple strings are provided, itemstring must contain all substrings.",
+    parameters = "<substrings ...>",
 	func = function(player,paramlist)
 
 		local paramt = tokenize(paramlist)
+
+        if #paramt <= 0 then
+            minetest.chat_send_player("No substrings to search with.")
+        end
 
 		for _,mtitem in pairs(itemlist) do
 			-- for each item ...
@@ -80,7 +86,17 @@ end
 
 minetest.register_chatcommand("listinventory",{
     privs = "itemsearch",
+    description = "List item strings of each item in inventory",
     func = function(player,paramlist)
-        identify_inventory(minetest.get_player_by_name(player) )
+        if paramlist ~= "" then
+            local target_player = minetest.get_player_by_name(paramlist)
+            if target_player then
+                identify_inventory(target_player)
+            else
+                minetest.chat_send_player(player, "Could not get player "..paramlist)
+            end
+        else
+            identify_inventory(minetest.get_player_by_name(player) )
+        end
     end,
 })
