@@ -8,10 +8,12 @@
 
 local itemlist = {}
 
+local include_creative_blacklist = minetest.settings:get_bool("itemsearch.include_creative_blacklist")
+
 local loadup = function(rtable)
 	if not rtable then return end
 	for mtitem,def in pairs(rtable) do
-		if not def.groups or not def.groups.not_in_creative_inventory then
+		if include_creative_blacklist or not (def.groups and def.groups.not_in_creative_inventory) then
 			-- Use a key to avoid duplicate entries
 			itemlist[mtitem] = mtitem
 		end
